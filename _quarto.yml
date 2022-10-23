@@ -1,8 +1,9 @@
 project:
   type: website
+  output-dir: docs
 
 website:
-  title: "WebScrapingWithR"
+  title: "Web Scraping With R. Course Website"
   navbar:
     left:
       - href: index.qmd
