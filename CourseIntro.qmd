@@ -1,0 +1,5 @@
+---
+title: "Course Presentation"
+---
+
+This is a course about _Web Scraping_ using the open source language R

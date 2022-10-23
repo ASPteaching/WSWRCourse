@@ -1,0 +1,15 @@
+---
+title: "Scraping sessions"
+---
+
+- Introduction to Web Scraping
+
+-  The basics: HTML and CSS
+
+- Scraping web pages with R using `rvest`
+
+- XML, XPath and the DOM. Parsing XML
+
+- Using APIs to get data
+
+

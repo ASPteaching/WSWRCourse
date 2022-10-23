@@ -1,0 +1,13 @@
+---
+title: "Working with R"
+---
+
+-   [Introduction to R](sessions/R4DataScience-1-Introduction_to_R.pdf)
+
+-   Data Exploration and Visualization
+
+-   Data Transformations
+
+-   Functions, loops and other automations
+
+-   Dynamic reporting with Rmarkdown

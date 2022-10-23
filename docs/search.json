@@ -12,5 +12,26 @@
     "title": "About",
     "section": "",
     "text": "About this site"
+  },
+  {
+    "objectID": "RSessions.html",
+    "href": "RSessions.html",
+    "title": "Working with R",
+    "section": "",
+    "text": "Introduction to R\nData Exploration and Visualization\nData Transformations\nFunctions, loops and other automations\nDynamic reporting with Rmarkdown"
+  },
+  {
+    "objectID": "ScrapingSessions.html",
+    "href": "ScrapingSessions.html",
+    "title": "Scraping sessions",
+    "section": "",
+    "text": "Introduction to Web Scraping\nThe basics: HTML and CSS\nScraping web pages with R using rvest\nXML, XPath and the DOM. Parsing XML\nUsing APIs to get data"
+  },
+  {
+    "objectID": "CourseIntro.html",
+    "href": "CourseIntro.html",
+    "title": "Course Presentation",
+    "section": "",
+    "text": "This is a course about Web Scraping using the open source language R"
   }
 ]

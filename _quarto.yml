@@ -9,6 +9,20 @@ website:
       - href: index.qmd
         text: Home
       - about.qmd
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
+      - section: "Presentation"
+        contents: 
+          - CourseIntro.qmd
+        text: "Introduction to the course"
+      - section: "Introducing R"
+        contents:
+          - RSessions.qmd
+      - section: "Web Scraping"
+        contents:
+          - ScrapingSessions.qmd
 
 format:
   html:
