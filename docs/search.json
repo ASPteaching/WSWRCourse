@@ -25,7 +25,7 @@
     "href": "ScrapingSessions.html",
     "title": "Scraping sessions",
     "section": "",
-    "text": "Introduction to Web Scraping\nThe basics: HTML and CSS\nScraping web pages with R using rvest\nXML, XPath and the DOM. Parsing XML\nUsing APIs to get data"
+    "text": "Introduction to Web Scraping (with R)\n\nExample: Scraping the World Heritage Site (files)\n\nThe basics: HTML and CSS\nScraping web pages with R using rvest\nXML, XPath and the DOM. Parsing XML\nUsing APIs to get data"
   },
   {
     "objectID": "CourseIntro.html",
