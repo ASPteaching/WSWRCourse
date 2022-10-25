@@ -160,7 +160,15 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
+  <li><a href="#contents" id="toc-contents" class="nav-link" data-scroll-target="#contents">Contents</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -181,9 +189,32 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>This is a course about <em>Web Scraping</em> using the open source language R</p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>An important aspect when dealing with data in our days is that, very often, they can be obtained from the web although this is not necessarily straightforward, that is they need to be downloaded and go through some preprocessing and extraction processes, which depend on the format in which they are stored in the web.</p>
+<p>This course explores some of these&nbsp;formats jointly with the methods and tools used to retrieve data from the web and extract the&nbsp;desired information.</p>
+<p>The first part introduces some&nbsp;common web technologies, their relationship and some tools to manipulate&nbsp;and extract the information such as regular expressions. Next common formats for storing&nbsp;web information (HTML, XML, JSON) are presented, as well as tools to&nbsp;extract it, as XPath and CSS selectors. Finally we introduce some&nbsp;R packages suitable to process Web information and use them in some case studies.</p>
+</section>
+<section id="objectives" class="level1">
+<h1>Objectives</h1>
+<p>Specifically at the end of the course students should:</p>
+<p>Be familiar with the main technologies to deal with information stored in the web.</p>
+<p>Be able to recognize the different formats that can be used for storage.</p>
+<p>Know how to extract information from these formats using specific&nbsp;R packages</p>
+</section>
+<section id="contents" class="level1">
+<h1>Contents</h1>
+<ol type="1">
+<li><p>Introducing technologies. Web scrapping and web scrapping projects.</p></li>
+<li><p>Data representation in the web HTML, XML, JSON. Other technologies.</p></li>
+<li><p>Parsing HTML using <code>rvest</code></p></li>
+<li><p>More powerful parsing of HTML and XML using CSS selectors, Regular expressions and XPath.</p></li>
+<li><p>Parsing data using APIs</p></li>
+<li><p>Case studies: (1) Parsing data from semi-structured documents. (2) Scraping Twitter for Sentiment Analysis. (3) Gathering data from commercial sites</p></li>
+</ol>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -11,7 +11,7 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site"
+    "text": "A Website to provide materials and ressources for the Web Scraping in R course.\nPrepared using quarto and rendered from github using github pages\nhttps://aspteaching.github.io/WSWRCourse"
   },
   {
     "objectID": "RSessions.html",
@@ -32,6 +32,6 @@
     "href": "CourseIntro.html",
     "title": "Course Presentation",
     "section": "",
-    "text": "This is a course about Web Scraping using the open source language R"
+    "text": "Objectives\nSpecifically at the end of the course students should:\nBe familiar with the main technologies to deal with information stored in the web.\nBe able to recognize the different formats that can be used for storage.\nKnow how to extract information from these formats using specific R packages\n\n\nContents\n\nIntroducing technologies. Web scrapping and web scrapping projects.\nData representation in the web HTML, XML, JSON. Other technologies.\nParsing HTML using rvest\nMore powerful parsing of HTML and XML using CSS selectors, Regular expressions and XPath.\nParsing data using APIs\nCase studies: (1) Parsing data from semi-structured documents. (2) Scraping Twitter for Sentiment Analysis. (3) Gathering data from commercial sites"
   }
 ]
