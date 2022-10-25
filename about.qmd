@@ -2,4 +2,9 @@
 title: "About"
 ---
 
-About this site
+- A Website to provide materials and ressources for the _Web Scraping in R_ course.
+
+- Prepared using [quarto](https://quarto.org) and rendered from github using github pages
+
+- [https://aspteaching.github.io/WSWRCourse](https://aspteaching.github.io/WSWRCourse)
+
