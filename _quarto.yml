@@ -4,30 +4,22 @@ project:
 
 website:
   title: "Web Scraping With R. Course Website"
-  navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
   sidebar:
-    style: "docked"
+    background: primary
+    style: docked
     search: true
     contents:
-      - section: "Presentation"
-        contents: 
-          - CourseIntro.qmd
-        text: "Introduction to the course"
-      - section: "Introducing R"
-        contents:
-          - RSessions.qmd
-      - section: "Web Scraping"
-        contents:
-          - ScrapingSessions.qmd
+      - href: CourseIntro.qmd
+        text: Home
+      - href: RSessions.qmd
+        text: Introduction to R
+      - href: ScrapingSessions.qmd
+        text: Web Scraping
 
 format:
   html:
     theme: cosmo
-    css: styles.css
+#    css: styles.css
     toc: true
 
 

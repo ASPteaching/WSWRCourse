@@ -40,11 +40,11 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "navbar",
+  "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "end",
-  "type": "overlay",
+  "panel-placement": "start",
+  "type": "textbox",
   "limit": 20,
   "language": {
     "search-no-results-text": "No results",
@@ -60,36 +60,12 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed">
+<body class="nav-sidebar docked">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
-      <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Web Scraping With R. Course Website</span>
-    </a>
-  </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page">Home</a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html">About</a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
-      </div> <!-- /container-fluid -->
-    </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
       <h1 class="quarto-secondary-nav-title">Web Scraping With R</h1>
@@ -100,9 +76,14 @@ ul.task-list li input[type="checkbox"] {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Web Scraping With R. Course Website</a> 
+    </div>
+      </div>
       <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
@@ -110,57 +91,34 @@ ul.task-list li input[type="checkbox"] {
       </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Presentation</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./CourseIntro.html" class="sidebar-item-text sidebar-link">Course Presentation</a>
+  <a href="./CourseIntro.html" class="sidebar-item-text sidebar-link">Home</a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Introducing R</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./RSessions.html" class="sidebar-item-text sidebar-link">Working with R</a>
+  <a href="./RSessions.html" class="sidebar-item-text sidebar-link">Introduction to R</a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Web Scraping</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ScrapingSessions.html" class="sidebar-item-text sidebar-link">Scraping sessions</a>
+  <a href="./ScrapingSessions.html" class="sidebar-item-text sidebar-link">Web Scraping</a>
   </div>
 </li>
-      </ul>
-  </li>
     </ul>
     </div>
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#teaching-staff" id="toc-teaching-staff" class="nav-link" data-scroll-target="#teaching-staff">Teaching Staff</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -181,27 +139,29 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p><strong>Description</strong></p>
+<section id="overview" class="level1">
+<h1>Overview</h1>
 <p>An important aspect when dealing with data in our days is that, very often, they can be obtained from the web although this is not necessarily straightforward, that is they need to be downloaded and go through some preprocessing and extraction processes, which depend on the format in which they are stored in the web.</p>
 <p>This course explores some of these&nbsp;formats jointly with the methods and tools used to retrieve data from the web and extract the&nbsp;desired information.</p>
 <p>The first part introduces some&nbsp;common web technologies, their relationship and some tools to manipulate&nbsp;and extract the information such as regular expressions. Next common formats for storing&nbsp;web information (HTML, XML, JSON) are presented, as well as tools to&nbsp;extract it, as XPath and CSS selectors. Finally we introduce some&nbsp;R packages suitable to process Web information and use them in some case studies.</p>
-<p><strong>Objectives</strong></p>
-<p>Specifically at the end of the course students should:</p>
-<ul>
-<li><p>Be familiar with the main technologies to deal with information stored in the web.</p></li>
-<li><p>Be able to recognize the different formats that can be used for storage.</p></li>
-<li><p>Know how to extract information from these formats using specific&nbsp;R packages</p></li>
-</ul>
-<p><strong>Contents</strong></p>
-<ol type="1">
-<li><p>Introducing technologies. Web scrapping and web scrapping projects.</p></li>
-<li><p>Data representation in the web HTML, XML, JSON. Other technologies.</p></li>
-<li><p>Regular expressions for data manipulation.</p></li>
-<li><p>Parsing HTML and XML. Using CSS selectors and XPath.</p></li>
-<li><p>Case studies: (1) Parsing data from semi-structured documents. (2) Scraping Twitter for Sentiment Analysis. (3) Gathering data from commercial sites</p></li>
-</ol>
+</section>
+<section id="teaching-staff" class="level1">
+<h1>Teaching Staff</h1>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://grbio.upc.edu/en/about-us/cv/francesc-carmona-pontaque"><img src="images/francesccarmona.png" class="img-fluid figure-img" alt="Francesc Carmona. PHD. Departament de Genàtica, Microbiologia i Estadística. UB"></a></p>
+<p></p><figcaption class="figure-caption">Professor Francesc Carmona.</figcaption><p></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://grbio.upc.edu/en/about-us/cv/alex-sanchez-pla"><img src="images/alexsanchezpla.jpeg" class="img-fluid figure-img" alt="Alex Sanchez-Pla PhD. Departament de Genàtica, Microbiologia i Estadística. Universitat de Barcelona" width="200"></a></p>
+<p></p><figcaption class="figure-caption">Professor Alex Sanchez Pla</figcaption><p></p>
+</figure>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
