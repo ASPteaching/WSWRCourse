@@ -4,11 +4,11 @@ title: "Scraping sessions"
 
 -   [Introduction to Web Scraping (with R)](sessions/0-Web_Scraping_with_R.pdf)
 
-    -   Example: Scraping the World Heritage Site ([download zipped files](World_Heritage.zip))
+    -   Example: Scraping the World Heritage Site ([download zipped files](Examples/World_Heritage.zip))
 
 -   [The basics: HTML and CSS](sessions/1-Introduction_to_HTML_and_CSS.pdf)
 
-    -   HTML Examples ([download zipped files](HTMLexampleFiles.zip))
+    -   HTML Examples ([download zipped files](Examples/HTMLexampleFiles.zip))
 
 -   [Scraping web pages with R using rvest](sessions/2-Parsing_HTML.pdf)
 
