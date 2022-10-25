@@ -6,7 +6,7 @@ title: "Scraping sessions"
 
     -   Example: Scraping the World Heritage Site ([download zipped files](World_Heritage.zip))
 
--   [The basics: HTML and CSS](1-Introduction_to_HTML_and_CSS.pdf)
+-   [The basics: HTML and CSS](sessions/1-Introduction_to_HTML_and_CSS.pdf)
 
     -   HTML Examples ([download zipped files](HTMLexampleFiles.zip))
 
