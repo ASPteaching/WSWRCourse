@@ -2,7 +2,7 @@
 title: "Course Presentation"
 ---
 
-# Description
+# Overview
 
 An important aspect when dealing with data in our days is that, very often, they can be obtained from the web although this is not necessarily straightforward, that is they need to be downloaded and go through some preprocessing and extraction processes, which depend on the format in which they are stored in the web.
 
