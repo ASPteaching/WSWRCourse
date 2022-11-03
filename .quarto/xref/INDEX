@@ -13,5 +13,11 @@
   },
   "CourseIntro.qmd": {
     "CourseIntro.html": "b85c3e8f"
+  },
+  "Exercises/ch-3-Regular expressions-Exercises.Rmd": {
+    "ch-3-Regular expressions-Exercises.html": "a3033eaa"
+  },
+  "Examples/WebScraping_Course-Examples _and_Exercises.qmd": {
+    "WebScraping_Course-Examples _and_Exercises.html": "142405c6"
   }
 }

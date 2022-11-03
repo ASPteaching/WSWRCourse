@@ -2,20 +2,28 @@
 title: "Scraping sessions"
 ---
 
--   [Introduction to Web Scraping (with R)](sessions/0-Web_Scraping_with_R.pdf)
+- [Introduction to Web Scraping (with R)](sessions/0-Web_Scraping_with_R.pdf)
 
-    -   Example: Scraping the World Heritage Site ([download zipped files](World_Heritage.zip))
+  - Example: Scraping the World Heritage Site ([download zipped files](World_Heritage.zip))
 
--   [The basics: HTML and CSS](sessions/1-Introduction_to_HTML_and_CSS.pdf)
+- [The basics: HTML and CSS](sessions/1-Introduction_to_HTML_and_CSS.pdf)
 
-    -   HTML Examples ([download zipped files](HTMLexampleFiles.zip))
+  - HTML Examples ([download zipped files](HTMLexampleFiles.zip))
 
--   [Scraping web pages with R using rvest](sessions/2-Parsing_HTML.pdf)
+- [Scraping web pages with R using rvest](sessions/WebScraping-1b-Parsing_HTML.pdf)
+  - [SelectorGadget vignette](https://rvest.tidyverse.org/articles/selectorgadget.html)
+  - [rvest documentation](https://www.rdocumentation.org/packages/rvest/versions/1.0.3 "A help page for rvest powered by DataCamp")
+  - [Web scraping 101 (`rvest` vignette)](https://cran.r-project.org/web/packages/rvest/vignettes/rvest.html)
+  - [Exercises](Exercises/ch-2-Parsing-HTML-Exercises.html)
 
-    -   [rvest documentation](https://www.rdocumentation.org/packages/rvest/versions/1.0.3 "A help page for rvest powered by DataCamp")
-    -   [Web scraping 101 (`rvest` vignette)](https://cran.r-project.org/web/packages/rvest/vignettes/rvest.html)
-    -   [Exercises](Exercises/ch-2-Parsing-HTML-Exercises.html)
+- Automation and other tools
+  - [Automating Web Scraping](sessions/WebScraping-2a-Automating_Web_Scraping.pdf)
+  - [Regular expressions](sessions/WebScraping-2b-Regular_Expressions.pdf)
+    - [Exercises](Exercises/ch-3-Regular_expressions-Exercises.html)
+    
+- XML and XPath 
+  - [Introduction to XML](sessions/WebScrapping-3a-Introduction_to_XML)
+  - [Parsing XML with XPath](sessions/WebScrapping-3b-Parsing-XML-and-XPATH)
+    - [Exercises](Exercises/ch-4-xpath-problems.R)
 
--   XML, XPath and the DOM. Parsing XML
-
--   Using APIs to get data
+- Using APIs to get data
