@@ -15,11 +15,12 @@ website:
         text: Introduction to R
       - href: ScrapingSessions.qmd
         text: Web Scraping
+      - href: Ressources.qmd
+        text: References & Resources
 
 format:
   html:
     theme: cosmo
-#    css: styles.css
     toc: true
 
 

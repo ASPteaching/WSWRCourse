@@ -1,0 +1,43 @@
+---
+title: "References and Ressources"
+---
+
+# Books
+
+## Web scraping with R
+
+- [Automated Data Collection from the Web with R](http://www.r-datacollection.com/), by Munzer, Rubba, Meisner & Nyhulis. Wiley.
+
+## Data technologies including XML
+
+- [Introduction to Data Technologies](https://www.stat.auckland.ac.nz/~paul/ItDT/itdt-2013-03-26.pdf). Paul Murrell.
+- [XML and Web Technologies for Data Science with R](https://link.springer.com/book/10.1007/978-1-4614-7900-0#toc). Deborah Nolan & Duncan Temple Lang. UseR!
+
+## Web scraping in general
+
+- [Web scraping. Subirats Maté, L., Calvo González, M. (2019). Oberta UOC Publishing]()
+
+
+# Courses
+- [Web scraping in R (Datacamp)](https://www.datacamp.com/courses/web-scraping-in-r)
+- [Learn to scrape any website with R (Udemy)](https://www.udemy.com/course/scrape-any-website-with-r/)
+- [Easy-t-follow Web Scraping (Dataslice)](https://www.youtube.com/playlist?list=PLr5uaPu5L7xLEclrT0-2TWAz5FTkfdUiW)
+
+
+# Web documents/bookdown/etc
+
+- [Web scraping with R](https://steviep42.github.io/webscraping/book/) by Steve Pittard
+- [Introduction to Computing with Data](https://www.gastonsanchez.com/intro2cwd/) by [Gaston Sánchez](https://www.gastonsanchez.com/)
+- [Crime by the numbers with R](https://crimebythenumbers.com/), part IV is on Web Scraping.
+
+# Tutorials/Blog posts/etc
+
+- [Web scraping for the humanities and social sciences](http://quantifyingmemory.blogspot.co.uk/2014/02/web-scraping-basics.html), Rolf Fredheim and Aiora Zabala.
+- [R-bloggers posts on *Web Scraping*](http://www.r-bloggers.com/?s=web+scraping)
+- And see also [CRAN Web Services and Technologies task view](https://cran.r-project.org/web/views/WebTechnologies.html)
+
+# Other ressources
+
+- [Selectorgadget](https://rvest.tidyverse.org/articles/selectorgadget.html)
+
+

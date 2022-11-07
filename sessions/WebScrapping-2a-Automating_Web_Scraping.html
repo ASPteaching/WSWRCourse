@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Automating web scraping with R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Alex Sanchez and Francesc Carmona" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css4WScourse.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Automating web scraping with R
+]
+.author[
+### Alex Sanchez and Francesc Carmona
+]
+.institute[
+### Genetics Microbiology and Statistics Department <br> Universitat de Barcelona
+]
+.date[
+### October 2022
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 28px;
+    padding: 1em 2em 1em 2em;
+}
+.left-code {
+  color: #777;
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+&lt;style&gt;
+span.small {
+  font-size: smaller;
+}
+&lt;/style&gt;
+
+
+
+# Outline
+
+.columnwide[
+  ### 1) [Introduction](#Introduction)
+  ### 2) [User defined functions](#functions)
+  ### 3) [Changing the execution flow](#loops)
+  ### 4) [References and Resources](#Resources)
+]
+
+---
+
+class: inverse, middle, center
+
+name: Introduction
+
+# Introduction
+
+---
+
+# Introduction
+
+- We have introduced R  as a *a language (a tool), to manage and analyze data*.
+- It is also a *programming language*
+  + It is simple and versatile
+  + The user can create new functions that adapt to their
+needs
+  + It is widely used (2nd most widely used in Data Science)
+  + Users provide the community with a high variety of solutions ("packages")
+  + As a programming language it is not, however, very efficient
+    
+---
+
+# Example 1: Why we need programming
+
+- It is very common that one has to do repetitive tasks on a the same type of datasets, e.g. 
+  - Data produced periodically o,
+  - Data from multiple sources but have the same structure.
+
+- For example, given a file with information about the cities of a given province, we are required to produce a simpler version:
+  - With less columns
+  - Without spaces or accents in the column names
+  - With the appropriate data types for each column
+
+---
+
+# Example 1: Transformations 
+
+&lt;div style="font-size:16pt"&gt;
+
+
+```r
+library(dplyr); library(janitor)
+MunicipisBARC &lt;- read.csv("datasets/MunicipisBARC.csv", quote='"')
+MunicipisBreu &lt;- MunicipisBARC %&gt;% select (2,9,10,27,28) %&gt;%  
+  janitor::clean_names() %&gt;% 
+  mutate (across(c("codi_de_comarca", "nom_de_la_comarca"), as.factor))
+```
+
+---
+
+# Example 1: Before and after transform
+
+ &lt;div style="font-size:12pt"&gt;
+
+.pull-left[
+
+```r
+summary(MunicipisBARC[,c(2,9,10,27,28)])
+```
+
+```
+##     Codi.INE    Codi.de.comarca Nom.de.la.comarca 
+##  Min.   :8001   Min.   : 3.00   Length:311        
+##  1st Qu.:8078   1st Qu.: 7.00   Class :character  
+##  Median :8156   Median :17.00   Mode  :character  
+##  Mean   :8166   Mean   :19.73                     
+##  3rd Qu.:8236   3rd Qu.:24.00                     
+##  Max.   :8905   Max.   :42.00                     
+##  Nombre.d.habitants     Extensió     
+##  Min.   :     27.0   Min.   :  0.40  
+##  1st Qu.:    734.5   1st Qu.: 11.01  
+##  Median :   3219.0   Median : 21.17  
+##  Mean   :  18375.3   Mean   : 24.90  
+##  3rd Qu.:  11010.5   3rd Qu.: 34.12  
+##  Max.   :1636732.0   Max.   :102.90
+```
+]
+
+.pull-right[
+
+
+```r
+summary(MunicipisBreu)
+```
+
+```
+##     codi_ine    codi_de_comarca       nom_de_la_comarca
+##  Min.   :8001   24     : 47     Osona          : 47    
+##  1st Qu.:8078   41     : 39     Vallès Oriental: 39    
+##  Median :8156   6      : 33     Anoia          : 33    
+##  Mean   :8166   7      : 30     Bages          : 30    
+##  3rd Qu.:8236   11     : 30     Baix Llobregat : 30    
+##  Max.   :8905   14     : 30     Berguedà       : 30    
+##                 (Other):102     (Other)        :102    
+##  nombre_d_habitants     extensio     
+##  Min.   :     27.0   Min.   :  0.40  
+##  1st Qu.:    734.5   1st Qu.: 11.01  
+##  Median :   3219.0   Median : 21.17  
+##  Mean   :  18375.3   Mean   : 24.90  
+##  3rd Qu.:  11010.5   3rd Qu.: 34.12  
+##  Max.   :1636732.0   Max.   :102.90  
+## 
+```
+
+`codi_de_comarca` and `nom_de_la_comarca` are now factors.
+]
+
+---
+
+# Repeating the transformation
+
+- How should we proceed if these changes had to be applied repeteadly to many distinct files (with same structure)
+
+- One solution may consists of:
+  - providing some way to encapsulate all steps needed to do the transformation 
+  - in such a way that they can be easily applied to a file everytime they are required.
+  
+- This is an example of a "function" (a type of sub-program in R) that we would use to automate this preprocessing.
+
+---
+
+class: inverse, middle, center
+
+name: functions
+
+# User defined functions
+
+---
+
+# Functions are named expressions
+
+- A function is a set of statements organized together to perform a specific task. 
+- R has a large number of in-built functions.
+- Users can create their own functions, for those situations where they wish to apply the same set of instructions more than once.
+
+&lt;div style="font-size:18pt"&gt;
+
+```r
+function_name &lt;- function(arg_1, arg_2, ...) {
+   sentence 1
+   ...
+   sentence n
+   return(result)
+}
+```
+
+Go [here](https://www.tutorialspoint.com/r/r_functions.htm) for more information on functions.
+
+---
+# A preprocessing function
+
+We can encapsulate preprocessing in a function:
+&lt;div style="font-size:14pt"&gt;
+
+```r
+preprocessa &lt;- function(nomArxiuMunicipi){
+  require(dplyr); require(janitor)
+  unMunicipi &lt;- read.csv(nomArxiuMunicipi)
+  unMunicipiBreu &lt;- unMunicipi %&gt;% select (2,9,10,27,28) %&gt;%  
+  janitor::clean_names() %&gt;% 
+  mutate (across(c("codi_de_comarca", "nom_de_la_comarca"), as.factor))
+  return(unMunicipiBreu)
+}
+```
+
+And use it whenever is required. Assuming we had the files "MunicipisBARC.csv", "MunicipisGIRO.csv" and "MunicipisLLEI.csv" available we would do: 
+
+
+```r
+BCNBreu &lt;- preprocessa("MunicipisBARC.csv")
+GiroBreu &lt;- preprocessa("MunicipisGIRO.csv")
+LleidaBreu &lt;- preprocessa("MunicipisLLEI.csv")
+```
+
+---
+
+# Scraping a recipes site
+
+- Imagine we are scraping a recipes site
+- The code below extracts (without cleaning it) a recipe for brownies.
+
+&lt;div style="font-size:12pt"&gt;
+
+```r
+library(rvest)
+brownies &lt;- read_html("https://www.allrecipes.com/recipe/25080/mmmmm-brownies/")
+ingredients &lt;- brownies %&gt;% 
+  html_elements( "#mntl-structured-ingredients_1-0") %&gt;% 
+  html_text2() %&gt;% stringr::str_split("\\n\\n")
+
+xpath4Directions &lt;- '//*[(@id = "recipe__steps_1-0")]'
+
+directions &lt;-  brownies %&gt;% 
+  html_elements( xpath=xpath4Directions) %&gt;% 
+  html_text2() %&gt;% stringr::str_split("\\n\\n") 
+```
+
+&lt;/div&gt;
+- Selectors were obtained inspecting the page source code with SelectorGadget or Google Developper tools.
+
+---
+# The scraped recipe
+
+&lt;div style="font-size:12pt"&gt;
+.pull-left[
+
+```r
+show(ingredients)
+```
+
+```
+## [[1]]
+##  [1] "Ingredients"                       
+##  [2] "½ cup white sugar"                 
+##  [3] "2 tablespoons butter"              
+##  [4] "2 tablespoons water"               
+##  [5] "1 ½ cups semisweet chocolate chips"
+##  [6] "2 large eggs, beaten"              
+##  [7] "½ teaspoon vanilla extract"        
+##  [8] "⅔ cup all-purpose flour"           
+##  [9] "½ teaspoon salt"                   
+## [10] "¼ teaspoon baking soda"
+```
+]
+.pull-right[
+
+```r
+show(directions)
+```
+
+```
+## [[1]]
+## [1] "Directions"                                                                                                                                                                                                                                                                                                                    
+## [2] "Preheat the oven to 325 degrees F (165 degrees C). Grease an 8-inch square pan."                                                                                                                                                                                                                                               
+## [3] "Combine sugar, butter, and water in a medium saucepan; cook and stir over medium heat until boiling. Remove from heat and stir in chocolate chips until melted and smooth; mix in eggs and vanilla. Combine flour, salt, and baking soda; stir into the chocolate mixture. Spread brownie batter evenly into the prepared pan."
+## [4] "Bake in the preheated oven until top is dry and edges have started to pull away from the sides of the pan, about 20 to 30 minutes. Let cool completely before cutting into squares."                                                                                                                                           
+## [5] "dotdash meredith food studios"
+```
+]
+---
+
+# A function to scrape recipes
+
+- Proceed similarly as before:
+  - abstracting the process and 
+  - turning what is different every time (URL) into arguments
+  
+&lt;div style="font-size:12pt"&gt;
+
+```r
+scrape_recipes &lt;- function(URL) {
+  aDessert &lt;- read_html(URL)
+  ingredients &lt;- aDessert %&gt;% 
+    html_elements( "#mntl-structured-ingredients_1-0") %&gt;% 
+    html_text2() %&gt;% stringr::str_split("\\n\\n")
+
+  xpath4Directions &lt;- '//*[(@id = "recipe__steps_1-0")]'
+
+  directions &lt;-  aDessert %&gt;% 
+    html_elements( xpath=xpath4Directions) %&gt;% 
+    html_text2()%&gt;% stringr::str_split("\\n\\n")
+  return(list(Ingredientes=ingredients, Receta=directions))
+}
+```
+
+
+---
+# The scraped recipe (2)
+
+&lt;small&gt;
+
+```r
+library(rvest)
+recipeURL &lt;- "https://www.allrecipes.com/recipe/25080/mmmmm-brownies/"
+brownies &lt;- scrape_recipes (recipeURL)
+```
+&lt;/small&gt;
+&lt;div style="font-size:12pt"&gt;
+.pull-left[
+
+```r
+show(brownies[["Ingredientes"]])
+```
+
+```
+## [[1]]
+##  [1] "Ingredients"                       
+##  [2] "½ cup white sugar"                 
+##  [3] "2 tablespoons butter"              
+##  [4] "2 tablespoons water"               
+##  [5] "1 ½ cups semisweet chocolate chips"
+##  [6] "2 large eggs, beaten"              
+##  [7] "½ teaspoon vanilla extract"        
+##  [8] "⅔ cup all-purpose flour"           
+##  [9] "½ teaspoon salt"                   
+## [10] "¼ teaspoon baking soda"
+```
+]
+.pull-right[
+
+```r
+show(show(brownies[["Receta"]]))
+```
+
+```
+## [[1]]
+## [1] "Directions"                                                                                                                                                                                                                                                                                                                    
+## [2] "Preheat the oven to 325 degrees F (165 degrees C). Grease an 8-inch square pan."                                                                                                                                                                                                                                               
+## [3] "Combine sugar, butter, and water in a medium saucepan; cook and stir over medium heat until boiling. Remove from heat and stir in chocolate chips until melted and smooth; mix in eggs and vanilla. Combine flour, salt, and baking soda; stir into the chocolate mixture. Spread brownie batter evenly into the prepared pan."
+## [4] "Bake in the preheated oven until top is dry and edges have started to pull away from the sides of the pan, about 20 to 30 minutes. Let cool completely before cutting into squares."                                                                                                                                           
+## [5] "dotdash meredith food studios"                                                                                                                                                                                                                                                                                                 
+## 
+## NULL
+```
+]
+
+---
+
+class: inverse, middle, center
+
+name: flowchange
+
+# Changing the flow
+
+---
+
+# Changing the flow of execution
+
+
+- R, as most ordinary programming languages, is executed lineally, that is from the first to last line.
+- Sometimes this needs to be changed.
+    + Taking alternative flows according to certain conditions
+    + Repeating some instructions while certain condition holds, or a fixed number of times,...
+    
+- This can be acomplished using *Flow Control Structures*
+
+---
+
+# Loop controlled by a counter: `for`
+
+- Loops are used in programming to repeat a specific block of code made by one or more instructions.
+- Syntax of `for` loops:
+
+
+```r
+    for (val in sequence)
+    {
+    statement
+    }
+```
+
+- `sequence` is a vector and `val` takes on _each of its values_ during the loop. 
+- In each iteration, `statement` is evaluated.
+
+---
+
+# Example of `for` loop
+
+- A `for` loop can be used to preprocess a list of selected files
+- Assume we have the list of four files to be processed, and __*we know they have the same structure*__.
+- To process them all in one step do (not run):
+
+&lt;div style="font-size:15pt"&gt;
+
+```r
+llistaMunicipis &lt;- c("MunicipisBAR.csv", "MunicipisGIR.csv", 
+                     "MunicipisLLE.csv", "MunicipisTAR.csv" )
+for (nomFitxerMunicipis in llistaMunicipis) {
+  municipisProvincia &lt;- preprocessa("nomFitxerMunicipis")
+  summary(municipisProvincia)
+}
+```
+An alternative way to run the loop:
+
+```r
+for (i in 1:length(llistaMunicipis) {
+  municipisProvincia &lt;- preprocessa(llistaMunicipis[i])
+```
+
+---
+
+# Exercise
+
+- Create a `for` loop that reads all filenames in your datasets directory (or the directory you decide) and prints the name of the file and the column names in the screen.
+
+---
+
+# Scraping multiple recipes
+
+- Imagine we want to process not one but many desserts' recipes from the web 
+"https://www.allrecipes.com/".
+- This can be done using a simple for loop:
+
+
+&lt;div style="font-size:11pt"&gt;
+
+```r
+recipe_urls &lt;- c("https://www.allrecipes.com/recipe/25080/mmmmm-brownies/",
+                 "https://www.allrecipes.com/recipe/27188/crepes/",
+                 "https://www.allrecipes.com/recipe/22180/waffles-i/")
+listOfRecipes &lt;- list()
+for (i in 1:length(recipe_urls)) {
+  listOfRecipes[i] &lt;- scrape_recipes(recipe_urls[i])
+}
+```
+&lt;div&gt;
+
+&lt;div style="font-size:18pt"&gt;
+- Notice that the resulting scraped recipes are now stored in a _list_ that will be eventually processed by the user.
+
+---
+# Exercise
+
+- Write a simple function to print one recipes obtained using the function `scrape_recipes`
+
+- Use this function to print all the recipes collected in the list "listOfRecipes" 
+-
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

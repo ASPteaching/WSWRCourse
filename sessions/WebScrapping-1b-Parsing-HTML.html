@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Web Scraping with R (1): Parsing HTML</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Alex Sanchez and Francesc Carmona" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css4WScourse.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Web Scraping with R (1): Parsing HTML
+]
+.author[
+### Alex Sanchez and Francesc Carmona
+]
+.institute[
+### Genetics Microbiology and Statistics Department <br> Universitat de Barcelona
+]
+.date[
+### October 2022
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 28px;
+    padding: 1em 2em 1em 2em;
+}
+.left-code {
+  color: #777;
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+&lt;style&gt;
+span.small {
+  font-size: smaller;
+}
+&lt;/style&gt;
+
+
+
+
+# Outline
+
+.columnwide[
+  ### 1) [Introduction: What is _parsing_](#Introduction)
+  ### 2) [Parsing HTML with `rvest``](#rvest)
+  ### 3) [Using CSS selectors to locate information](#css)
+  ### 4) [Improved selection using XPATH](#xpath)
+  ### 5) [References and Resources](#Resources)
+]
+
+---
+
+class: inverse, middle, center
+
+name: Introduction
+
+# Introduction: What is _parsing_?
+
+---
+
+# Introduction to parsing
+
+- Scraping HTML pages usually done in two steps: 
+    - First, desired content from the Web is examined to determine if it is actionable to further analyses.
+    - Second, HTML files are read and information is extracted from them. 
+
+- Parsing HTML occurs at both steps
+    - *by the browser* to display HTML content nicely, and also  
+    - *by parsers in R* to construct useful representations of HTML documents in our programming environment.
+
+---
+
+# What is *parsing*
+
+Parsing involves *breaking down a text into its component parts of speech with an explanation of the form, function, and syntactic relationship of each part*. [Wikipedia](https://en.wikipedia.org/wiki/Parsing).
+
+
+
+```r
+knitr::include_graphics("images/parseHTML.png")
+```
+
+&lt;img src="images/parseHTML.png" width="800" /&gt;
+&lt;small&gt;
+[HTML Parsing and Screen Scraping with the Simple HTML DOM Library](https://code.tutsplus.com/tutorials/html-parsing-and-screen-scraping-with-the-simple-html-dom-library--net-11856)
+&lt;/small&gt;
+---
+
+# Reading vs parsing
+
+- Not just a semantic difference: 
+  + **reading** relies on functions that *do not care about the formal grammar that underlies HTML*, only recognizing the sequence of symbols included in the HTML file.
+    
+  + **parsing** employs programs that understand the special meaning of the mark-up structure reconstructing the HTML hierarchy within some R-specified structure.
+
+---
+
+# Getting data (1): *Reading* an HTML file
+
+- HTML files are text files, thus, they can be read using the `readlines()` function:
+
+
+```r
+url &lt;- "http://www.r-datacollection.com/materials/html/fortunes.html"
+fortunes &lt;- readLines(con = url)
+head(fortunes, n=10)
+```
+
+```
+##  [1] "&lt;!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\"&gt;"                            
+##  [2] "&lt;html&gt; &lt;head&gt;"                                                               
+##  [3] "&lt;title&gt;Collected R wisdoms&lt;/title&gt;"                                          
+##  [4] "&lt;/head&gt;"                                                                     
+##  [5] ""                                                                            
+##  [6] "&lt;body&gt;"                                                                      
+##  [7] "&lt;div id=\"R Inventor\" lang=\"english\" date=\"June/2003\"&gt;"                 
+##  [8] "  &lt;h1&gt;Robert Gentleman&lt;/h1&gt;"                                                 
+##  [9] "  &lt;p&gt;&lt;i&gt;'What we have is nice, but we need something very different'&lt;/i&gt;&lt;/p&gt;"
+## [10] "  &lt;p&gt;&lt;b&gt;Source: &lt;/b&gt;Statistical Computing 2003, Reisensburg"
+```
+
+---
+
+# __readLines()__ is a _reading_ function
+
+- maps every line of the input file to a separate value in a character vector creating a flat representation of the document.
+
+- it is *agnostic* about the different tag elements (name, attribute, values, etc.),
+
+- it produces results that do not reflect the document’s internal hierarchy *as implied by the nested tags* in any sensible way.
+    
+---
+
+# Getting data (2): parsing an HTML file
+
+- To achieve a useful representation of HTML files, we need to employ a program that: 
+    + understands the special meaning of the markup structures, and 
+    + reconstructs the implied hierarchy of an HTML file within some R-specific data structure.
+- This can be achieved by parser functions such as `rvest::read_html()` or `XML::htmlparse`.
+
+---
+
+# Parsing HTML with read_html
+
+
+```r
+library(rvest)
+url &lt;- "http://www.r-datacollection.com/materials/html/fortunes.html"
+myHTML&lt;- read_html (url)
+myHTML
+```
+
+```
+## {html_document}
+## &lt;html&gt;
+## [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8 ...
+## [2] &lt;body&gt;\n&lt;div id="R Inventor" lang="english" date="June/2003"&gt;\n  &lt;h1&gt;Robe ...
+```
+
+---
+
+# The Document Object Model
+
+- The structure of the parsed HTML object can be better viewed using `xml_structure` function from the `xml2` package.
+
+
+```r
+# Print the HTML excerpt with the xml_structure() function
+xml2::xml_structure(myHTML)
+```
+
+- This representation is related with what we call the *Document Object Model (DOM)*.
+
+- A Document Object Model is a _queryable data object_ that can be  built from any HTML file and is useful for further processing of document parts.
+
+---
+
+# A distraction: HTML tree structure
+
+- A HTML document can be seen as a hierarchichal collection of tags which contain distinct elements.
+- &lt;span class="small"&gt;Hint: Paste the source code of the _fortunes.html_ document in [This viewer](https://software.hixie.ch/utilities/js/live-dom-viewer/)&lt;/span&gt;
+
+
+```r
+knitr::include_graphics("images/htmlHierarchy.png")
+```
+
+&lt;img src="images/htmlHierarchy.png" width="70%" /&gt;
+
+---
+
+# DOM-style parsers
+
+- Transformation from HTML code to the DOM is the task of a *DOM-style parsers*. 
+&lt;!-- - Parsers belong to a *general class of domain-specific programs that traverse over symbol sequences and reconstruct the semantic structure of the document within a data object of the programming environment*. --&gt;
+- There are two mainstream packages that can be used for parsing HTML code
+  + [rvest package](https://github.com/hadley/rvest) by Hadley Wickam,
+  + [XML package](https://cran.r-project.org/web/packages/XML/index.html) by Duncan Temple and Debbie Nolan.
+  
+- A few others can be found at [CRAN Task View: Web Technologies and Services](https://cran.r-project.org/web/views/WebTechnologies.html).
+    &lt;!-- + See also the table and introduction at: (An R web crawler and scraper)[https://github.com/salimk/Rcrawler] --&gt;
+
+---
+
+# Scrapping tools (I): The `XML` package
+
+
+- The `XML` package provides an interface to `libxml2` a powerful parsing library written in C.
+- The package is designed for two main purposes
+    + parsing xml / html content
+    + writing xml / html content (*we wonn't cover this*)
+
+---
+
+# What can be achieved with `XML`?
+
+- The `XML` package is useful at 4 major types of tasks:
+
+  1. parsing xml / html content
+  2. obtaining descriptive information about parsed contents
+  3. navigating the tree structure (ie *accessing its components*)
+  4. querying and extracting data from parsed contents
+
+- The `XML` package can be used for both XML and HTML parsing.
+
+---
+
+class: inverse, middle, center
+
+name: rvest
+
+# Parsing HTML with `rvest`
+
+---
+
+# Scraping tools: The `rvest` package
+
+- `rvest` is an R package written by [Hadley Wickam](http://hadley.nz/) to _easily scrap web pages_
+  - Wrappers around the 'xml2' and 'httr' packages to make it easy to download, and manipulate, HTML and XML
+  - It is inspired in the [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/) python package.
+  - It is designed to work with  [magrittr](https://github.com/tidyverse/magrittr) to simplify tasks.
+
+- See more information on `rvest` at: 
+ + [rvest package on CRAN](https://cran.r-project.org/web/packages/rvest/index.html)
+ + [rvest documentation on DataCamp](https://www.rdocumentation.org/packages/rvest/versions/1.0.3)
+    
+
+---
+
+# Basic `rvest` capabilities
+
+- Get the data: Parse an html document from a url, a file on disk or a string containing html with `read_html()` (from the `xml2` package!).&lt;tab&gt;   [+info](https://www.rdocumentation.org/packages/xml2/versions/1.3.3/topics/read_xml)
+
+- Extract elements using `html_element(s)()`.  [+info](https://www.rdocumentation.org/packages/rvest/versions/1.0.3/topics/html_element)
+
+- Use `html_text2()` to extract the plain text contents of an HTML element. [+info](https://www.rdocumentation.org/packages/rvest/versions/1.0.3/topics/html_text2)
+
+- Or use `html_attr(s)()` to retrieve the value of a single attribute. [+info](https://www.rdocumentation.org/packages/rvest/versions/1.0.3/topics/html_attr)
+
+- Use `html_table` to read a table from within a page. [+info](https://www.rdocumentation.org/packages/rvest/versions/1.0.3/topics/html_table)
+    
+---
+
+# More `rvest` capabilities
+
++ Get children from an element `html_children()`.
+
++ Extract, modify and submit forms with 
+  -`html_form()`, `set_values()` and `submit_form()`.
+
++ Detect and repair encoding problems with:
+  - `guess_encoding()` and `repair_encoding()`. 
+  Then pass the correct encoding into `html()` as an argument.
+
+---
+
+# Examples (1): Read HTML
+
+.pull-left[
+
+```r
+html_0 &lt;- '
+&lt;html&gt; 
+  &lt;body&gt; 
+    &lt;h1&gt;Web scraping is cool&lt;/h1&gt;
+    &lt;p&gt;It requires getting data and parsing it.&lt;/p&gt;
+    &lt;p&gt;&lt;a href="https://aspteaching.github.io/WSWRCourse"&gt;A course on Web Scraping&lt;/a&gt; &lt;/p&gt;
+  &lt;/body&gt; 
+&lt;/html&gt;'
+```
+]
+.pull-right[
+- HTML data can be read with `read_html`.
+
+```r
+html_object &lt;- xml2::read_html(html_0)
+show(html_0)
+```
+XML structure can be better viewed with:
+
+```r
+# Print the HTML excerpt with the xml_structure() function
+xml_structure(html_0)
+```
+]
+
+---
+# Examples (2): html_elements()
+
+.pull-left[
+
+```r
+list_of_links &lt;- '&lt;h3&gt;Useful links&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href="https://wikipedia.org"&gt;Wikipedia&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://www.ub.edu"&gt;UB&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://diba.cat"&gt;Diputació de Barcelona&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;'
+```
+]
+.pull-right[
+Extract all the "a" nodes from the bulleted list.
+
+```r
+links &lt;- list_of_links %&gt;% 
+  read_html() %&gt;% 
+  html_elements("a")
+```
+]
+
+---
+# Examples (3): html_table()
+
+.pull-left[
+
+```r
+sample1 &lt;- minimal_html("&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Col A&lt;/th&gt;&lt;th&gt;Col B&lt;/th&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;x&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;y&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;10&lt;/td&gt;&lt;td&gt;z&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;")
+```
+]
+.pull-right[
+
+```r
+sample1 %&gt;%
+  html_element("table") %&gt;%
+  html_table()
+```
+
+```
+## # A tibble: 3 × 2
+##   `Col A` `Col B`
+##     &lt;int&gt; &lt;chr&gt;  
+## 1       1 x      
+## 2       4 y      
+## 3      10 z
+```
+]
+
+---
+
+# Examples (3b): more `html_table()`
+
+
+
+```r
+url &lt;- "https://en.wikipedia.org/wiki/List_of_World_Heritage_in_Danger"
+pageTables &lt;- read_html (url)  %&gt;% 
+  html_elements("table") %&gt;%
+  html_table() 
+M2&lt;- pageTables[[2]]
+head(M2, n=3)
+```
+
+```
+## # A tibble: 3 × 9
+##   Name                Image Locat…¹ Crite…² Areah…³ Year …⁴ Endan…⁵ Reason Refs 
+##   &lt;chr&gt;               &lt;lgl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
+## 1 Abu Mena            NA    EgyAbu… Cultur… 182 (4…    1979 2001–   "Cave… [17]…
+## 2 Air and Ténéré Nat… NA    Niger1… Natura… 7,736,…    1991 1992–   "Mili… [20]…
+## 3 Ancient City of Al… NA    Aleppo… Cultur… 350 (8…    1986 2013–   "Syri… [22] 
+## # … with abbreviated variable names ¹​Location, ²​Criteria, ³​`Areaha (acre)`,
+## #   ⁴​`Year (WHS)`, ⁵​Endangered
+```
+
+---
+
+class: inverse, middle, center
+
+name: css
+
+# Using CSS selectors to locate information
+
+---
+
+# Improving location using css selectors
+
+- Functions such as `html_elements` or ` html_table` return one or all the elements of a given kind.
+- To decide _which objects to select_ we must identify them.
+- This may be done using CSS selectors that have been used in the page to give structure ("tags") or change properties ("class", "id") of objects.
+---
+
+# Examples 4: Selection with tags
+
+
+- We can select the elements of a given type letting `html_elements`know which type it is.
+
+&lt;div style="font-size:11pt"&gt;
+.pull-left[
+
+```r
+  myHTMLdoc &lt;- '&lt;html&gt; 
+  &lt;body&gt; 
+    &lt;div&gt;Python &lt;/div&gt;
+    &lt;p&gt; Is perfect for programming.&lt;/p&gt;
+    &lt;p&gt; A nicely built language &lt;/p&gt;
+    &lt;div&gt;R &lt;/div&gt;
+    &lt;p&gt;Better for data analysis.&lt;/p&gt;
+    &lt;p&gt;Has prettier charts, too.&lt;/p&gt;
+  &lt;/body&gt; 
+&lt;/html&gt;'
+```
+]
+.pull-right[
+
+```r
+theLanguages &lt;- read_html(myHTMLdoc) %&gt;%
+  html_elements('div') %&gt;%
+  html_text2()
+theLanguages
+```
+
+```
+## [1] "Python" "R"
+```
+
+]
+
+---
+
+# Examples 4b: Multiple selection
+
+- The same idea can be used to select elements that have one of several tags
+
+&lt;div style="font-size:11pt"&gt;
+.pull-left[
+
+```r
+  myHTMLdoc &lt;- '&lt;html&gt; 
+  &lt;body&gt; 
+    &lt;div&gt;Python &lt;/div&gt;
+    &lt;p&gt; Is perfect for programming.&lt;/p&gt;
+    &lt;small&gt; A nicely built language &lt;/small&gt;
+    &lt;div&gt;R &lt;/div&gt;
+    &lt;p&gt;Better for data analysis.&lt;/p&gt;
+    &lt;small&gt;Has prettier charts, too.&lt;/small&gt;
+  &lt;/body&gt; 
+&lt;/html&gt;'
+```
+]
+.pull-right[
+
+```r
+theLanguages &lt;- read_html(myHTMLdoc) %&gt;%
+  html_elements('div, small') %&gt;%
+  html_text2()
+theLanguages
+```
+
+```
+## [1] "Python"                    "A nicely built language"  
+## [3] "R"                         "Has prettier charts, too."
+```
+
+]
+&lt;/div&gt;
+---
+
+# Examples 5: Selection with class/id
+
+- After inspecting the page it can be seen that the table we are interested in is of class "wikitable"
+- This is informed to `html_element` as: _type.class_
+
+&lt;div style="font-size:11pt"&gt;
+
+
+```r
+url &lt;- "https://en.wikipedia.org/wiki/List_of_World_Heritage_in_Danger"
+oneTable &lt;- read_html (url)  %&gt;% 
+  html_element("table.wikitable") %&gt;%
+  html_table() 
+head(oneTable, n=3)
+```
+
+```
+## # A tibble: 3 × 9
+##   Name                Image Locat…¹ Crite…² Areah…³ Year …⁴ Endan…⁵ Reason Refs 
+##   &lt;chr&gt;               &lt;lgl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
+## 1 Abu Mena            NA    EgyAbu… Cultur… 182 (4…    1979 2001–   "Cave… [17]…
+## 2 Air and Ténéré Nat… NA    Niger1… Natura… 7,736,…    1991 1992–   "Mili… [20]…
+## 3 Ancient City of Al… NA    Aleppo… Cultur… 350 (8…    1986 2013–   "Syri… [22] 
+## # … with abbreviated variable names ¹​Location, ²​Criteria, ³​`Areaha (acre)`,
+## #   ⁴​`Year (WHS)`, ⁵​Endangered
+```
+
+---
+# Combining selectors
+
+- Selectors can be combined using operators as follows:
+  `selector1 {space|&gt;|+|~} selector2`
+
+- There are four types of combinators
+  - `space`: Descendant combinator
+  - `&gt;`: Child combinator
+  - `+`: Adjacent sibling combinator
+  - `~`: General sibling combinator
+
+---
+
+# Examples 6: Combining selectors
+
+
+&lt;div style="font-size:13pt"&gt;
+.pull-left[
+
+```r
+myhtml&lt;- "&lt;html&gt;
+&lt;body&gt;
+&lt;div class = 'first'&gt;
+&lt;a&gt;A link.&lt;/a&gt;
+&lt;p&gt;The first paragraph with
+&lt;a&gt;another link&lt;/a&gt;.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div&gt;
+Not an actual paragraph,
+but with a &lt;a href='#'&gt;link&lt;/a&gt;.
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;"
+```
+]
+.pull-right[
+
+
+```r
+htmlObj&lt;- myhtml %&gt;% read_html()
+htmlObj %&gt;% 
+  html_elements('div.first a')
+htmlObj %&gt;% 
+  html_elements('div.first &gt; a')
+htmlObj %&gt;% 
+  html_elements('div.first + div')
+htmlObj %&gt;% 
+  html_elements('div.first ~ div')
+```
+
+]
+&lt;/div&gt;
+---
+
+# Examples 7: Combining selectors
+
+
+&lt;div style="font-size:13pt"&gt;
+.pull-left[
+
+```r
+myhtml&lt;- '&lt;html&gt;
+  &lt;body&gt;
+    &lt;div class="first section"&gt;
+      Some text with a &lt;a href="#"&gt;link&lt;/a&gt;.
+    &lt;/div&gt;
+    &lt;div class="second section"&gt;
+      Some text with &lt;a href="#"&gt;another link&lt;/a&gt;.
+      &lt;div class="first paragraph"&gt;Some text.&lt;/div&gt;
+      &lt;div class="second paragraph"&gt;Some more text.
+        &lt;div&gt;...&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;'
+```
+]
+.pull-right[
+
+- Select all divs that descend from another div.
+- This can be done easily:
+
+```r
+htmlObj&lt;- myhtml %&gt;% read_html()
+# Select the three divs with a simple selector
+htmlObj %&gt;%
+	html_elements('div div')
+```
+
+- Or more complicated:
+
+
+```r
+# ComplexSelect
+htmlObj %&gt;%
+	html_elements('.first + .second &gt; div, 
+	              div.second.paragraph &gt; div')
+```
+]
+&lt;/div&gt;
+---
+
+
+class: inverse, middle, center
+
+name: xpath
+  
+# Improved selection using XPATH
+
+---
+
+# What is XPATH
+
+- The **real power of parsing** comes from the ability to 
+  + *locate* nodes and 
+  + *extract* information from them.
+- Sometimes, however, it may be complicated to identify the exact piece we wish to extract from a chunk of html.
+- A good alternative to combinations of selectors is provided by XPATH.
+- XPATH is __a language to navigate through elements and attributes in an XML/HTML document__
+
+---
+
+# Example: Locating items (1)
+
+.pull-left[
+&lt;img src="images/xpathExample1.png" width="404" /&gt;
+]
+
+&lt;div style="font-size:13pt"&gt;
+.pull-right[
+
+
+```r
+instruction &lt;- "html %&gt;%
+   html_elements(xpath = '//p')"
+# CSS selector equivalent: p
+```
+
+
+```r
+instruction &lt;- "html %&gt;%
+   html_elements(xpath = '//body//p')"
+# CSS selector equivalent: body p
+```
+
+
+```r
+instruction &lt;- "html %&gt;%
+   html_elements(xpath = '/html/body//p')"
+# CSS selector equivalent: html &gt; body p
+```
+]
+
+---
+
+# Example: Locating items (2)
+
+.pull-left[
+&lt;img src="images/xpathExample2.png" width="404" /&gt;
+]
+
+.pull-right[
+&lt;div style="font-size:13pt"&gt;
+
+```r
+instruction &lt;- "html %&gt;% 
+html_elements(xpath = '//div/p')"
+# CSS selector equivalent: div &gt; p
+```
+]
+
+---
+
+# Example: Locating (3)
+
+.pull-left[
+&lt;img src="images/xpathExample3.png" width="403" /&gt;
+]
+
+.pull-right[
+&lt;div style="font-size:14pt"&gt;
+
+
+```r
+instruction &lt;- "html %&gt;%
+html_elements(xpath = '//div[a]')"
+# CSS selector equivalent: none"
+```
+]
+
+---
+
+# XPATH syntax
+
+- XPATH uses __path expressions__ to select nodes in an XML document. 
+- It has a computational model to identify sets of nodes (node-sets).
+- We can specify paths through the tree structure:
+    + based on node names
+    + based on node content
+    + based on a node’s relationship to other nodes
+---
+
+# Writing XPATH sentences
+
+- The key concept is knowing to write XPATH expressions.
+- XPATH expressions have a syntax similar to the way files are located in a hierarchy of directories/folders in a computer file system. 
+- For instance, the XPATH expression to locate the first "span" _that is the child_ of a "div" element, the syntax is:
+
+
+```r
+'//div/span'
+```
+- XPATH sentences may look strange, but they are automatically provided by selectorGadget or Google developper tools
+
+---
+# Getting XPATH for a given selector
+&lt;div style="font-size:15pt"&gt;
+.pull-left[
+- Go to page "https://www.allrecipes.com/recipe/25080/mmmmm-brownies/"
+- Select the "Recipe" block and use Google Developper Tools (right button --&gt; "Inspeccionar") to inspect the selector associated with it.
+- Use the right button again to copy to clipboard either:
+  - The selector
+  - Its XPATH translation
+- Check that it works parsing the url and sending the selectors to html_element
+]
+
+.pull-right[
+&lt;img src="images/inspectSelectors1.png" width="1645" /&gt;
+
+selector : "#recipe\_\_steps\_1-0"
+
+xpath : '//*[@id="recipe\_\_steps\_1-0"]`'
+]
+
+---
+# XPATH main expressions
+
+- The main path expressions (ie symbols) are:
+
+&lt;div align="center"&gt;
+&lt;img src="images/XPathSyntax1.png" width="100%" style="float:centered"/&gt;
+&lt;/div&gt;
+
+---
+
+# XPATH wildcards
+
+- XPATH wildcards can be used to select unknown elements
+
+&lt;div align="center"&gt;
+&lt;img src="images/XPathWildcards1.png" width="100%" style="float:centered"/&gt;
+&lt;/div&gt;
+
+---
+class: inverse, middle, center
+
+name: Resources
+
+# References and Resources
+
+- [HTML Parsing and Screen Scraping with the Simple HTML DOM Library](https://code.tutsplus.com/tutorials/html-parsing-and-screen-scraping-with-the-simple-html-dom-library--net-11856)
+
+- [A guide to CSS selectors for Web Scraping](https://datagrab.io/blog/guide-to-css-selectors-for-web-scraping/)
+
+---
+
+# Resources
+ 
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
