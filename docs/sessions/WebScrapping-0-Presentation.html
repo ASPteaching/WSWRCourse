@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Web Scraping with R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Alex Sanchez and Francesc Carmona" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css4WScourse.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Web Scraping with R
+]
+.author[
+### Alex Sanchez and Francesc Carmona
+]
+.institute[
+### Genetics Microbiology and Statistics Department <br> Universitat de Barcelona
+]
+.date[
+### October 2022
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 25px;
+    padding: 1em 2em 1em 2em;
+}
+.left-code {
+  color: #777;
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+&lt;/style&gt;
+
+
+
+
+# Contents
+
+1. Introduction to web technologies &amp; Overview
+2. The basics: HTML and CSS
+3. Scraping web pages with R using `rvest`
+4. XML, XPath and the DOM. Parsing XML
+5. Using APIs to get data
+
+---
+
+# Objectives and Competences
+
+- Become familiar with technologies for content dissemination on the web.
+
+- Information extraction from web-formatted data.
+
+- Become familiar -*that is, know how to do it*- with the different tasks involved in web scraping.
+
+- Learn how to set up and execute successful web scraping projects (making them as automatic, robust and error-resistant as possible).
+
+---
+
+# We need data, and the web is full of it
+
+- Whatever our job is, it often relies on having the appropriate data to work with.
+- The web has plenty of data
+    + In 2008, an estimated 154 million HTML tables (out of the 14.1 billion) contain 'high quality relational data'!!!
+    + Hard to quantify how much more exists outside of HTML Tables, but there is an estimate of at least 30 million lists with 'high quality relational data'.
+- Accessing the data in the web is the topic of this course
+
+
+---
+
+# What we need to know
+
+- Technologies that allow the *distribution of content on the Web*.
+- Techniques &amp; Tools for *collecting* (as opposite to distributing) data from the web.
+- In the way to acquiring these abilites we may learn many useful things that don't necessarily have to do with web scraping such as:
+    + HTML/CSS for creating web -and non web- pages.
+    + XML for sharing many types of data (also pdf, excel or epub)
+    + Regular expressions for describing patterns in strings.
+    + A variety of text mining and other interesting topics, such as "Sentiment Analysis" for analyzing data from Twitter, Linkedin etc.
+
+
+---
+
+# Data Technologies 
+
+Technologies for disseminating, extracting, and storing web data.
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="images/webTechnologies.png" alt="Source: Automated Data Collection with R" width="90%" /&gt;
+&lt;p class="caption"&gt;Source: Automated Data Collection with R&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+# Technologies (1): HTML
+
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/html.jpeg" height="75%" style="float:centered"
+ alt ="Technologies (1): HTML" /&gt; 
+&lt;/div&gt;
+
+- **H**ypertext **M**arkup **L**anguage (HTML) is the language that all browsers understand.
+- Not a dedicated data storage format but 
+- First option for containing information we look for.
+- A minimum understanding of html required 
+
+
+---
+
+# Technologies (2): CSS
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/250px-CSS-shade.svg.png" height="100%" style="float:centered"
+ alt ="Technologies (1): XML" /&gt; 
+&lt;/div&gt;
+
+- CSS is the language for describing the presentation of Web pages, including colors, layout, and fonts. 
+- It allows one to adapt the presentation to different types of devices, such as large screens, small screens, or printers. 
+- CSS is independent of HTML and can be used with any XML-based markup language.
+
+
+---
+
+# Technologies (3): XML
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/xml.png" height="75%" style="float:centered"
+ alt ="Technologies (1): XML" /&gt; 
+&lt;/div&gt;
+
+- E**X**tensible **M**arkup **L**anguage or XML is one of the most popular formats for exchanging data over the Web.
+- XML is "just" data wrapped in user-defined tags. 
+- The user-defined tags **make XML much more flexible** for storing data than HTML.
+
+---
+
+# Technologies (4): XPath
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/xpath.png" height="75%" style="float:centered"
+ alt ="Technologies (4): XPath" /&gt; 
+&lt;/div&gt;
+
+- The **X**ML **Path**Language provides a powerful syntax for handling specific elements of an XML document and, to the same extent, HTML web pages in a simple way.
+- XML is "just" data wrapped in user-defined tags. 
+- The user-defined tags **make XML much more flexible** for storing data than HTML.
+
+---
+
+# Technologies (4): JSON
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/json.jpeg" height="75%" style="float:centered"
+ alt ="Technologies (3): JSON" /&gt; 
+&lt;/div&gt;
+
+- JavaScript Object Notation or JSON
+- JSON is a lightweight data-interchange format
+- JSON is language independent but uses javascript syntax
+- JSON is a syntax for storing and exchanging data.
+- JSON is an easier-to-use alternative to XML
+
+---
+
+# Technologies (5) XML vs JSON
+
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/json-vs-xml.png" width="90%" style="float:centered"
+ alt ="Technologies (3): JSON" /&gt; 
+&lt;/div&gt;
+
+---
+
+&lt;!-- # Technologies (6): AJAX --&gt;
+
+&lt;!-- &lt;div align="center"&gt;  --&gt;
+&lt;!--  &lt;img src="images/ajax.jpeg" height="75%" style="float:centered" --&gt;
+&lt;!--  alt ="Technologies (6): AJAX" /&gt;  --&gt;
+&lt;!-- &lt;/div&gt; --&gt;
+
+&lt;!-- - AJAX = Asynchronous JavaScript And XML. --&gt;
+&lt;!-- - AJAX is a group of technologies that uses a combination of: --&gt;
+&lt;!--     + A user built-in XMLHttpRequest object (to request data from a web server) --&gt;
+&lt;!--     + JavaScript and HTML DOM (to display or use the data) --&gt;
+
+&lt;!-- - AJAX allows web pages to be updated asynchronously by exchanging data with a web server behind the scenes.  --&gt;
+&lt;!-- - This means that it is possible to update parts of a web page, without reloading the whole page. --&gt;
+
+&lt;!-- --- --&gt;
+
+# Technologies (6): Regular Expressions
+
+&lt;br&gt;
+&lt;div align="center"&gt; 
+ &lt;img src="images/regular-expression.gif" width="95%" style="float:centered"
+ alt ="Technologies (4): AJAX" /&gt; 
+&lt;/div&gt;
+
+---
+
+# So what is web scraping?
+
+- Web scraping (web harvesting or web data extraction) is how we name computer software techniques for extracting information from websites.
+
+    + See [Wikipedia](https://en.wikipedia.org/wiki/Web_scraping)
+
+- Web scraping focuses on the *transformation of unstructured data* on the web, typically in web format such as HTML, XML or JSON, into *structured* data that can be stored and analyzed in a central local database or spreadsheet.
+    + Instead of structured data, if using R, we can think of *[tidy](http://vita.had.co.nz/papers/tidy-data.pdf)* data.
+
+
+---
+
+# Understanding web communication: http
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/client-server.png"  style="float:centering"
+ alt ="Undrestanding web browsing" /&gt; 
+&lt;/div&gt;
+
+- User/Client asks for information: **http request**
+- Server returns the information **http response**
+- Data acquisition may be performed at two levels
+    + Requesting information directly from the server
+    + Parsing the response emited by the server
+
+---
+
+# Requesting information directly 
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/client-server-retrieve.png" width=70% style="float:centering"
+ alt ="Undrestanding web browsing" /&gt; 
+&lt;/div&gt;
+- Two ways for direct information retrieval:
+  - in raw form through http GET requests
+  - through an Application Programming Interface (API)
+      - many APIs for retrieving data from "typical" places such as Twitter, Amazon, Linkedin, etc. 
+          - In R: "RLinkedin" "TwiteR" etc. packages
+      - APIs require an authorization/user identification
+    
+&lt;!-- - R packages  --&gt;
+&lt;!--     + `httr`, `Rcurl` --&gt;
+&lt;!--     + `tweeteR`, `Rlinkedin` --&gt;
+
+---
+
+# Parsing the server's response
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/client-server-parse.png" style="float:centered"
+ alt ="Undrestanding web browsing" /&gt; 
+&lt;/div&gt;
+
+- Parser tools extract information from the response sent by the server to the browser.
+- The response is usually an HTML / XML document.
+- Parsers exploit the hierarchichal structure of HTML / XML to extract information and convert it into R objects
+- R packages:  `rvest`, `selectR`,  `XML`, `xml2`
+
+---
+
+# The R scraping toolkit
+
+
+- Comparison of some popular R packages for data collection.
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/TheRscrapingToolkit.png"  width="90%" style="float:centered"
+ alt ="R packages for data collection" /&gt; 
+&lt;/div&gt;
+
+Source: **RCrawler: An R package for parallel web crawling and scraping**. Salim Khalil &amp; MohamedFakir. 
+https://doi.org/10.1016/j.softx.2017.04.004
+
+---
+
+# Web scraping and R
+
+
+- Web scraping has been developed independently of R. &lt;br&gt;See for example:
+    + [Scraping the Web for Arts and Humanities](https://www.essex.ac.uk/ldev/documents/going_digital/scraping_book.pdf)
+    + [Introduction to Web Scraping using Scrapy and Postgres](http://newcoder.io/scrape/)
+    
+- There is a lot of information on scraping using python
+- However if you feel comfortable working with R it is possible that you can absorbe easier and faster some of the the vast amount of resources for getting data from the web with R.
+
+---
+
+# The scrapping process
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/fromTheWebIntoR.png" width="100%" style="float:centered"/&gt; 
+&lt;/div&gt;
+
+---
+
+# Example: Heritage sites in danger
+
+- The UNESCO is an organization of the United Nations which, among other things, fights for the preservation of the world's natural and cultural heritage. 
+- As November 2013 there  are 981 heritage sites, most of which of are man-made like the Pyramids of Giza, but also natural phenomena like the Great Barrier Reef are listed. 
+- Unfortunately, some of the awarded places are threatened by human intervention. 
+- These are the questions that we want to examine in this first case study.
+    + *Which sites are threatened and where are they located?*
+    + *Are there regions in the world where sites are more endangered than in others?* 
+    + *What are the reasons that put a site at risk?* 
+
+---
+
+# Working through the case study with R
+
+- This case study has been adapted from chapter 1 of the book [Automated Data Collection with R](http://www.r-datacollection.com/) (ADCR, from now on). 
+- Its goal is not to be exhaustive but providing a first example of a situation where we obtain and analyze data from the web.
+- The goal is to tabulate and plot a list of endangered sites available in  [https://en.wikipedia.org/wiki/List_of_World_Heritage_in_Danger](https://en.wikipedia.org/wiki/List_of_World_Heritage_in_Danger).
+- We proceed as follows:
+
+1. Go to the web and locate the desired information
+2. Download the pages (here, HTML document)
+3. Extract HTML table into an R object
+4. Clean the data and build a data.frame
+5. Plot and analyze
+
+&lt;!--
+**See the complete analysis file in the demos folder.**
+
+**See lesson "WebScrapping-1b-Parsing HTML" in the Summer School folder** for an example that uses `rvest`
+--&gt;
+
+
+---
+
+# Example 1a: Wikipedia page
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/worldheritages1WikiPage.png"  width="90%"style="float:centered"
+ alt ="R packages for data collection" /&gt; 
+&lt;/div&gt;
+
+
+---
+
+# Example 1b: Locate desired table
+
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/worldHeritages2Table.png"  width="90%"style="float:centered"
+ alt ="R packages for data collection" /&gt; 
+&lt;/div&gt;
+
+---
+
+# Example 1c: R code (1)
+
+&lt;small&gt;
+
+```r
+# load packages
+library(stringr); library(XML); library(maps)
+#--- parsing from locally stored HTML file
+heritage_parsed &lt;- htmlParse("worldheritagedanger.htm")
+#--- Extract table from web page and select desired table
+danger_table &lt;- readHTMLTable(heritage_parsed, stringsAsFactors = FALSE, which = 2) #--- select and rename columns
+danger_table &lt;- danger_table[,c(1,3,4,6,7)]
+colnames(danger_table) &lt;- c("name","locn","crit","yins","yend")
+#--- Clean data
+danger_table$crit &lt;- ifelse(str_detect(danger_table$crit, "Natural")T, "nat", "cult")
+# cleanse years
+danger_table$yins &lt;- as.numeric(danger_table$yins)
+danger_table$yend &lt;- as.numeric(unlist(str_extract_all(danger_table$yend, "[[:digit:]]{4}$")))
+#--- get countries
+```
+&lt;/small&gt;
+
+---
+
+# Example 1c: R code (2)
+
+&lt;small&gt;
+
+```r
+#--- get countries
+reg &lt;- "[[:alpha:] ]+(?=[[:digit:]])"
+danger_table$country &lt;- str_extract(danger_table$locn , reg) 
+#--- get coordinates
+reg_y &lt;- "[/][ -]*[[:digit:]]*[.]*[[:digit:]]*[;]"
+reg_x &lt;- "[;][ -]*[[:digit:]]*[.]*[[:digit:]]*"
+danger_table$y_coords &lt;- as.numeric(str_sub(str_extract(danger_table$locn, reg_y), 3, -2))
+danger_table$x_coords &lt;-  as.numeric(str_sub(str_extract(danger_table$locn, reg_x), 3, -1))
+#--- plot endangered heritage sites
+par(oma=c(0,0,0,0)); par(mar=c(0,0,0,0))
+pch &lt;- ifelse(danger_table$crit  "nat", 19, 2)
+map("world", col = "darkgrey", lwd = .5, mar = c(0.1,0.1,0.1,0.1))
+points(danger_table$x_coords, danger_table$y_coords, pch = pch, col = "black", cex = .8)
+box()
+```
+&lt;/small&gt;
+---
+
+# Example 1d: We have an R data frame
+
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/worldHeritages3RDataFrame.png"  width="90%"style="float:centered"
+ alt ="R packages for data collection" /&gt; 
+&lt;/div&gt;
+
+---
+
+# Example 1e: And now the plot
+
+
+&lt;div align="center"&gt; 
+ &lt;img src="images/worldHeritages4Map.png"  width="90%"style="float:centered"
+ alt ="R packages for data collection" /&gt; 
+&lt;/div&gt;
+
+---
+
+# References and resources (1)
+
+__Books__
+- [Automated Data Collection from the Web with R](http://www.r-datacollection.com/), by Munzer, Rubba, Meisner &amp; Nyhulis. Wiley.
+- [XML and Web Technologies for Data Science with R](http://www.rxmlwebtech.org/). Deborah Nolan &amp; Duncan Temple Lang. UseR!
+- [Introduction to Data Technologies](https://www.stat.auckland.ac.nz/~paul/ItDT/itdt-2013-03-26.pdf). Duncan Murdoch.
+
+__Courses__
+- [Datacamp: Web scraping in R](https://www.datacamp.com/courses/web-scraping-in-r)
+- [Learn to scrape any website with R](https://www.udemy.com/course/scrape-any-website-with-r/)
+---
+
+# References and resources (2)
+
+__Web documents/bookdown/etc.__
+
+- [Introduction to Computing with Data](https://www.gastonsanchez.com/intro2cwd/), particularly part IX, [Data Technologies](https://www.gastonsanchez.com/intro2cwd/datatech-intro.html)
+- [Web scraping with R](https://steviep42.github.io/webscraping/book/) by Steve Pittard
+
+
+__Tutorials/Blog posts/etc.__
+
+- [Getting Data from the Web with R](https://github.com/gastonstat/tutorial-R-web-data), by Gaston Sánchez.
+- [Web scraping for the humanities and social sciences](http://quantifyingmemory.blogspot.co.uk/2014/02/web-scraping-basics.html), Rolf Fredheim and Aiora Zabala.
+- [R-bloggers posts on *Web Scraping*](http://www.r-bloggers.com/?s=web+scraping)
+- And see also [CRAN Web Services and Technologies task view](https://cran.r-project.org/web/views/WebTechnologies.html)
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

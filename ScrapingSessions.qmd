@@ -22,7 +22,11 @@ title: "Scraping sessions"
   - [Automating Web Scraping](sessions/WebScraping-2a-Automating_Web_Scraping.pdf)
   - [Regular expressions](sessions/WebScraping-2b-Regular_Expressions.pdf)
     - [Exercises](Exercises/ch-3-Regular_expressions-Exercises.html)
-    
+
+- Parsing PDF files  
+  - [Parsing PDF files](sessions/WebScraping-3c-Scraping-PDF-documents.pdf)
+  - [Examples](Examples/Extracting_data_from_pdf.zip)
+  
 - XML and XPath 
   - [Introduction to XML](sessions/WebScrapping-3a-Introduction_to_XML)
   - [Parsing XML with XPath](sessions/WebScrapping-3b-Parsing-XML-and-XPATH)

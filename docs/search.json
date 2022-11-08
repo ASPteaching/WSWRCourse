@@ -25,7 +25,7 @@
     "href": "ScrapingSessions.html",
     "title": "Scraping sessions",
     "section": "",
-    "text": "Introduction to Web Scraping (with R). (pdf)\n\nExample: Scraping the World Heritage Site (download zipped files)\n\nExample: Scraping the World Heritage Site (download zipped files)\n\n\nThe basics: HTML and CSS\n\nHTML Examples (download zipped files)\n\nHTML Examples (download zipped files)\n\n\nScraping web pages with R using rvest\n\nSelectorGadget vignette\nrvest documentation\nWeb scraping 101 (rvest vignette)\nExercises\n\nAutomation and other tools\n\nAutomating Web Scraping\nRegular expressions\n\nExercises\n\n\nXML and XPath\n\nIntroduction to XML\nParsing XML with XPath\n\nExercises\n\n\nUsing APIs to get data"
+    "text": "Introduction to Web Scraping (with R). (pdf)\n\nExample: Scraping the World Heritage Site (download zipped files)\n\nExample: Scraping the World Heritage Site (download zipped files)\n\n\nThe basics: HTML and CSS\n\nHTML Examples (download zipped files)\n\nHTML Examples (download zipped files)\n\n\nScraping web pages with R using rvest\n\nSelectorGadget vignette\nrvest documentation\nWeb scraping 101 (rvest vignette)\nExercises\n\nAutomation and other tools\n\nAutomating Web Scraping\nRegular expressions\n\nExercises\n\n\nParsing PDF files\n\nParsing PDF files\nExamples\n\nXML and XPath\n\nIntroduction to XML\nParsing XML with XPath\n\nExercises\n\n\nUsing APIs to get data"
   },
   {
     "objectID": "CourseIntro.html",
